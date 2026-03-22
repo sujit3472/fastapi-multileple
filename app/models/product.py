@@ -10,6 +10,7 @@ class Product(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(255), unique=True)
     price = Column(Float)
+    image = Column(String(255))
 
     category_id = Column(
         Integer,

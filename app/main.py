@@ -5,9 +5,13 @@ from fastapi.exceptions import HTTPException
 from .database import engine, Base
 
 from .routers import product, category
+from fastapi.staticfiles import StaticFiles
+
 
 
 app = FastAPI()
+
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):

@@ -1,4 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
+import os
+import shutil
+
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
@@ -10,20 +13,44 @@ from ..schemas.product import ProductUpdate
 from ..schemas.product import ProductResponse
 
 from ..utils.response import api_response
+from ..utils.file_upload import save_image
+
 
 router = APIRouter(
     prefix="/products",
     tags=["Products"]
 )
 
+UPLOAD_DIR = "uploads/products"
+
+ALLOWED_TYPES = [
+    "image/jpeg",
+    "image/png",
+    "image/jpg",
+    "image/webp",
+    "image/gif",
+]
 
 @router.post("/")
 def create_product(
-    data: ProductCreate,
-    db: Session = Depends(get_db)
+    name: str = Form(...),
+    price: int = Form(...),
+    category_id: int = Form(...),
+    image: UploadFile | None = File(None),
+    db: Session = Depends(get_db),
 ):
+    try:
+        filename = save_image(image, "products")
 
-    product = Product(**data.dict())
+    except ValueError as e:
+        return api_response(400, str(e), None, False)
+
+    product = Product(
+        name=name,
+        price=price,
+        category_id=category_id,
+        image=filename
+    )
 
     try:
         db.add(product)
@@ -55,7 +82,14 @@ def get_products(db: Session = Depends(get_db)):
 
 
 @router.put("/{id}")
-def update_product(id: int, data:ProductUpdate, db: Session = Depends(get_db)):
+def update_product(
+    id: int,
+    name: str = Form(...),
+    price: int = Form(...),
+    category_id: int = Form(...),
+    image: UploadFile | None = File(None),
+    db: Session = Depends(get_db),
+):
     db_product = db.query(Product).filter(
         Product.id == id
     ).first()
@@ -63,10 +97,16 @@ def update_product(id: int, data:ProductUpdate, db: Session = Depends(get_db)):
     if not db_product:
         return api_response(404, "Product not found",None,False)
     
+    try:
+        filename = save_image(image, "products", db_product.image)
+
+    except ValueError as e:
+        return api_response(400, str(e), None, False)
     
-    db_product.name = data.name
-    db_product.price = data.price
-    db_product.category_id = data.category_id
+    db_product.name = name
+    db_product.price = price
+    db_product.category_id = category_id
+    db_product.image = filename
 
     try:
         db.commit()

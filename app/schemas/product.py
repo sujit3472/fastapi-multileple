@@ -16,6 +16,7 @@ class ProductResponse(ProductBase):
     name : str
     price : float
     category_id : int
+    image : str | None = None
 
     class Config:
         orm_mode = True
