@@ -1,0 +1,55 @@
+
+
+
+uvicorn main:app --reload
+
+source /var/www/html/FastAPI-Demo/myenv/bin/activate
+To project create under the multiple files need to use below folder structure
+ref link - https://fastapi.tiangolo.com/tutorial/bigger-applications/#an-example-file-structure
+.
+├── app
+│   ├── __init__.py
+│   ├── main.py
+│   ├── dependencies.py
+│   └── routers
+│   │   ├── __init__.py
+│   │   ├── items.py
+│   │   └── users.py
+│   └── internal
+│       ├── __init__.py
+│       └── admin.py
+1. Crete the app directory inside this directory add all files & folders
+2. Inside app directory create the myenv 
+    python -m venv myenv
+
+3. After this use the below command inside the app directory and run below command 
+    pip install fastapi uvicorn sqlalchemy pymysql pydantic
+
+2. In each directory need to create the __init__.py files
+3. create the myenv env inside the app directory
+4. install the all packages 
+5. In main.py file update the import statment like below syntax
+    from .database import engine, Base
+    from .routers import product
+    from .routers import category
+    
+    same inside the routers and model file
+    
+    from ..database import get_db
+    from ..models.product import Product
+    from ..models.category import Category
+    from ..schemas.product import ProductCreate
+    from ..schemas.product import ProductUpdate
+    from ..schemas.product import ProductResponse
+
+    from ..utils.response import api_response
+
+6. Deactivate conda completely
+    conda deactivate
+
+7. TO run the project use the below cmd 
+    python -m uvicorn app.main:app --reload
+    OR
+    uvicorn app.main:app --reload
+
+
