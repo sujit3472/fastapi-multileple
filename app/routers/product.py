@@ -14,11 +14,13 @@ from ..schemas.product import ProductResponse
 
 from ..utils.response import api_response
 from ..utils.file_upload import save_image
+from ..dependencies.auth import get_current_user
 
 
 router = APIRouter(
     prefix="/products",
-    tags=["Products"]
+    tags=["Products"],
+    dependencies=[Depends(get_current_user)]
 )
 
 UPLOAD_DIR = "uploads/products"

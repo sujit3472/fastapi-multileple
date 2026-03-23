@@ -4,7 +4,7 @@ from fastapi.exceptions import HTTPException
 
 from .database import engine, Base
 
-from .routers import product, category
+from .routers import product, category, auth
 from fastapi.staticfiles import StaticFiles
 
 
@@ -42,5 +42,6 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 Base.metadata.create_all(bind=engine) # table created only when call this method
 
+app.include_router(auth.router)
 app.include_router(category.router)
 app.include_router(product.router)

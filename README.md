@@ -77,3 +77,17 @@ python -m uvicorn app.main:app --reload
 ## 9. Swagger
 
 http://127.0.0.1:8000/docs
+
+
+## 10. File upload in fastAPI
+    pip install python-multipart
+    add the below lines
+
+    from fastapi import FastAPI, Form
+
+## 11. Authentication and authorization
+    pip install python-jose passlib[bcrypt] python-multipart
+    pip install pydantic[email]
+    pip install bcrypt==4.0.1
+    -create the respective auth files in each directory
+    -register the route in main.py file

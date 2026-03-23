@@ -6,10 +6,12 @@ from ..database import get_db
 from ..models.category import Category
 from ..schemas.category import CategoryCreate
 from ..schemas.category import CategoryUpdate
+from ..dependencies.auth import get_current_user
 
 router = APIRouter(
     prefix="/categories",
-    tags=["Categories"]
+    tags=["Categories"],
+    dependencies=[Depends(get_current_user)]
 )
 
 
