@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, Text
-from ..database import Base
+from sqlalchemy import Column, Integer, String, Text, DateTime
+from datetime import datetime
+from app.database import Base
 
 
 class User(Base):
@@ -12,3 +13,12 @@ class User(Base):
     password = Column(Text)
 
     role = Column(String(255), default="user")
+    status = Column(Integer, default=1)
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    updated_at = Column(
+        DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow
+    )

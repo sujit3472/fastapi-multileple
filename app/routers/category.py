@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
-from ..database import get_db
-from ..models.category import Category
+from app.database import get_db
+from app.models.category import Category
 from ..schemas.category import CategoryCreate
 from ..schemas.category import CategoryUpdate
 from ..dependencies.auth import get_current_user

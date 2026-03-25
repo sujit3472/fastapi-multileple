@@ -5,9 +5,9 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
-from ..database import get_db
-from ..models.product import Product
-from ..models.category import Category
+from app.database import get_db
+from app.models.product import Product
+from app.models.category import Category
 from ..schemas.product import ProductCreate
 from ..schemas.product import ProductUpdate
 from ..schemas.product import ProductResponse

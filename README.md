@@ -91,3 +91,59 @@ http://127.0.0.1:8000/docs
     pip install bcrypt==4.0.1
     -create the respective auth files in each directory
     -register the route in main.py file
+
+
+## For Migration use ##
+## 1. Install package
+    pip install alembic
+
+## 2. Initialize Alembic (inside app folder) IMPORTANT: run where main.py exists
+    alembic init alembic
+ 
+## 3. Configure database URL
+    Open app/alembic.ini
+    Set DB
+    sqlalchemy.url = mysql+pymysql://root:password@localhost/fastapi_db
+
+## 4. Create DB Manually
+
+## 5. Fix models import (IMPORTANT)
+    from ..database import Base
+    change to 
+    from database import Base
+    update this change inside the all models files
+    app/models/user.py
+
+## 6. Fix env.py (MOST IMPORTANT)
+    Open 
+        app/alembic/env.py
+    Add at the top
+        import sys
+        import os
+        sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+    Then import models correctly:
+        from database import Base
+        from models.user import User
+        from models.product import Product
+        from models.category import Category
+
+    Set metadata
+        target_metadata = Base.metadata
+
+## 7. Run migration (inside app folder)
+    alembic revision --autogenerate -m "create tables"
+    alembic upgrade head
+
+## If you want to alter the table use the below steps
+
+## 1. In model file add the fields you want
+## 2. After that run the below command with the details
+    alembic revision --autogenerate -m "add status and timestamps to users"
+## 3. If you want to update the default value go to 
+    op.add_column(
+    "users",
+    sa.Column("status", sa.Integer(), server_default="1")
+    )
+## 4. then run the below command
+    alembic upgrade head
