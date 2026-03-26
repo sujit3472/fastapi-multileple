@@ -1,4 +1,8 @@
+from typing import List
+
 from pydantic import BaseModel
+
+from app.schemas.product import ProductResponse
 
 
 class CategoryBase(BaseModel):
@@ -10,10 +14,13 @@ class CategoryCreate(CategoryBase):
 
 
 class CategoryResponse(CategoryBase):
-    id: int
-
+    id : int
+    name: str
+    products: List[ProductResponse]
+    
     class Config:
         orm_mode = True
+        from_attributes = True
 
 
 class CategoryUpdate(BaseModel):

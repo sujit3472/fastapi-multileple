@@ -1,12 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
 from app.database import get_db
 from app.models.category import Category
-from ..schemas.category import CategoryCreate
-from ..schemas.category import CategoryUpdate
+from ..schemas.category import CategoryCreate, CategoryUpdate, CategoryResponse
 from ..dependencies.auth import get_current_user
+from app.utils.response import api_response
 
 router = APIRouter(
     prefix="/categories",
@@ -42,8 +42,53 @@ def create_category(
 
 
 @router.get("/")
-def get_categories(db: Session = Depends(get_db)):
-    return db.query(Category).all()
+def get_categories(
+    search: str = Query(None),
+    page: int = Query(1, ge=1),
+    limit: int = Query(10, ge=1),
+    db: Session = Depends(get_db)):
+
+    query = db.query(Category)
+
+    # Search filter
+    if search:
+        query = query.filter(Category.name.ilike(f"%{search}%"))
+
+     # Total count (before pagination)
+    total = query.count()
+
+    # Pagination
+    offset = (page - 1) * limit
+    categoryList = query.offset(offset).limit(limit).all()
+
+    data = [
+        CategoryResponse.model_validate(c).model_dump()
+        for c in categoryList
+    ]
+
+    return api_response(200, "Category Lists", {
+        "items": data,
+        "total": total,
+        "page": page,
+        "limit": limit
+    }, True)
+
+
+@router.get("/{id}")
+def get_category_details(
+    id: int, 
+    db: Session = Depends(get_db)):
+    
+    db_category = db.query(Category).filter(Category.id == id).first()
+
+    if not db_category:
+        raise HTTPException(
+            status_code=404,
+            detail="Category not found"
+        )
+    
+    return api_response(200, "Category Details", CategoryResponse.model_validate(db_category).model_dump(), True)
+
 
 
 @router.put("/{id}")
