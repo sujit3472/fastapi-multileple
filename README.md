@@ -147,3 +147,7 @@ http://127.0.0.1:8000/docs
     )
 ## 4. then run the below command
     alembic upgrade head
+
+
+## To get the all installed packages using the below command for the project setup in other machine
+    pip freeze > requirements.txt

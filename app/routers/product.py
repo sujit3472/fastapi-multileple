@@ -1,7 +1,7 @@
 import os
 import shutil
 
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Query
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
@@ -74,13 +74,36 @@ def create_product(
 
 
 @router.get("/")
-def get_products(db: Session = Depends(get_db)):
-    products = db.query(Product).all()
+def get_products(
+    search: str = Query(None),
+    page: int = Query(1, ge=1),
+    limit: int = Query(10, ge=1),
+    db: Session = Depends(get_db)
+):
+    query = db.query(Product)
+
+    # Search filter
+    if search:
+        query = query.filter(Product.name.ilike(f"%{search}%"))
+
+    # Total count (before pagination)
+    total = query.count()
+
+    # Pagination
+    offset = (page - 1) * limit
+    products = query.offset(offset).limit(limit).all()
+
     data = [
         ProductResponse.model_validate(p).model_dump()
         for p in products
     ]
-    return api_response(200, "Product Lists", data, True)
+
+    return api_response(200, "Product Lists", {
+        "items": data,
+        "total": total,
+        "page": page,
+        "limit": limit
+    }, True)
 
 
 @router.put("/{id}")

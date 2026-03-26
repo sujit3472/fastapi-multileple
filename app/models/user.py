@@ -22,3 +22,6 @@ class User(Base):
         default=datetime.utcnow,
         onupdate=datetime.utcnow
     )
+
+    reset_token = Column(String(255), nullable=True, index=True)
+    reset_token_expiry = Column(DateTime, nullable=True)
