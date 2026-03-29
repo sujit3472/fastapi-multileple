@@ -66,12 +66,8 @@ def get_categories(
         for c in categoryList
     ]
 
-    return api_response(200, "Category Lists", {
-        "items": data,
-        "total": total,
-        "page": page,
-        "limit": limit
-    }, True)
+    return api_response(200, "Category Lists", 
+        {"items": data, "total": total, "page": page, "limit": limit}, True)
 
 
 @router.get("/{id}")

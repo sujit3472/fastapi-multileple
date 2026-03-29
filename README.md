@@ -151,3 +151,7 @@ http://127.0.0.1:8000/docs
 
 ## To get the all installed packages using the below command for the project setup in other machine
     pip freeze > requirements.txt
+
+## Removed Mysql DB connection and used postgres SQL 
+    pip uninstall pymysql mysqlclient
+    pip install psycopg2-binary

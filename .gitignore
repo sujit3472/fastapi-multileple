@@ -1,1 +1,7 @@
 .env
+app/alembic/*
+uploads/*
+__pycache__/
+
+*.pyc
+*.pyo

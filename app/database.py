@@ -1,7 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-DB_URL = "mysql+pymysql://root:password@localhost:3306/fast_api"
+#DB_URL = "mysql+pymysql://root:password@localhost:3306/fast_api"
+DB_URL = "postgresql://postgres:password@localhost:5432/fast_api_demo"
 
 engine = create_engine(DB_URL)
 
